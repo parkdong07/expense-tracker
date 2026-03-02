@@ -16,9 +16,33 @@
 </head>
 
 <body>
-    <div class="app-container">
+    <!-- PIN Overlay -->
+    <div id="pin-overlay" class="pin-overlay">
+        <div class="pin-card glass-panel">
+            <div class="pin-header">
+                <i class="fas fa-lock pin-icon"></i>
+                <h2>กรุณาใส่รหัสผ่าน</h2>
+                <p>เพื่อเข้าใช้งานระบบบันทึกรายรับ-รายจ่าย</p>
+            </div>
+            <div class="pin-input-wrapper">
+                <input type="password" id="pin-input" maxlength="4" placeholder="••••" pattern="\d*"
+                    inputmode="numeric">
+                <p id="pin-error" class="pin-error-msg" style="display: none;">รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่</p>
+            </div>
+            <button id="unlock-btn" class="btn unlock-btn">ปลดล็อค <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <div class="app-container" id="main-content" style="display: none;">
         <header class="glass-panel wallet-card">
-            <p class="card-label">ยอดเงินคงเหลือสุทธิ (เดือนนี้)</p>
+            <div class="header-top"
+                style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                <p class="card-label" style="margin-bottom: 0;">ยอดเงินคงเหลือสุทธิ (เดือนนี้)</p>
+                <button id="lock-app-btn" title="ล็อคแอป"
+                    style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; transition: var(--transition);">
+                    <i class="fas fa-lock"></i>
+                </button>
+            </div>
             <h2 id="balance" class="balance-amount">฿0.00</h2>
             <div class="income-expense-summary">
                 <div class="summary-item income">

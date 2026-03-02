@@ -13,6 +13,52 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// PIN Lock Configuration
+const APP_PIN = "1234";
+const pinOverlay = document.getElementById('pin-overlay');
+const mainContent = document.getElementById('main-content');
+const pinInput = document.getElementById('pin-input');
+const unlockBtn = document.getElementById('unlock-btn');
+const pinError = document.getElementById('pin-error');
+
+// Check PIN on load
+if (sessionStorage.getItem('app_unlocked') === 'true') {
+    pinOverlay.style.display = 'none';
+    mainContent.style.display = 'block';
+}
+
+function handleUnlock() {
+    if (pinInput.value === APP_PIN) {
+        sessionStorage.setItem('app_unlocked', 'true');
+        pinOverlay.style.opacity = '0';
+        setTimeout(() => {
+            pinOverlay.style.display = 'none';
+            mainContent.style.display = 'block';
+        }, 300);
+        init(); // Re-initialize to show data
+    } else {
+        pinError.style.display = 'block';
+        pinInput.value = '';
+        pinInput.focus();
+    }
+}
+
+const lockAppBtn = document.getElementById('lock-app-btn');
+
+function handleLock() {
+    sessionStorage.removeItem('app_unlocked');
+    pinInput.value = '';
+    pinOverlay.style.opacity = '1';
+    pinOverlay.style.display = 'flex';
+    mainContent.style.display = 'none';
+}
+
+unlockBtn.addEventListener('click', handleUnlock);
+lockAppBtn.addEventListener('click', handleLock);
+pinInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleUnlock();
+});
+
 const balance = document.getElementById('balance');
 const totalIncome = document.getElementById('total-income');
 const totalExpense = document.getElementById('total-expense');
