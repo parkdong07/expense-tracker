@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker | แบบบันทึกรายรับ-รายจ่าย</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header & Wallet -->
+        <header class="glass-panel">
+            <h1><i class="fas fa-wallet"></i> กระเป๋าเงินของฉัน</h1>
+            <div class="balance-container">
+                <p>ยอดเงินคงเหลือ</p>
+                <h2 id="balance" class="balance-amount">฿0.00</h2>
+            </div>
+            <div class="income-expense-summary">
+                <div class="summary-box income">
+                    <p>รายรับรวม</p>
+                    <h3 id="total-income" class="money-plus">+฿0.00</h3>
+                </div>
+                <div class="summary-box expense">
+                    <p>รายจ่ายรวม</p>
+                    <h3 id="total-expense" class="money-minus">-฿0.00</h3>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- Form Section -->
+            <section class="glass-panel form-section">
+                <h3><i class="fas fa-plus-circle"></i> เพิ่มรายการใหม่</h3>
+                <form id="transaction-form">
+                    <div class="form-group">
+                        <label for="type">ประเภท</label>
+                        <select id="type" required>
+                            <option value="expense">รายจ่าย</option>
+                            <option value="income">รายรับ</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">หมวดหมู่</label>
+                        <select id="category" required>
+                            <!-- Options will be populated by JS -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="text">รายละเอียด (ถ้ามี)</label>
+                        <input type="text" id="text" placeholder="ระบุรายละเอียด">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount">จำนวนเงิน (บาท)</label>
+                        <input type="number" id="amount" placeholder="ระบุจำนวนเงิน" min="0.01" step="0.01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date">วันที่</label>
+                        <input type="date" id="date" required>
+                    </div>
+
+                    <button class="btn" type="submit">บันทึกรายการ</button>
+                </form>
+            </section>
+
+            <!-- Transactions List -->
+            <section class="glass-panel history-section">
+                <h3><i class="fas fa-list"></i> ประวัติรายการ <span id="current-month-display"></span></h3>
+                <div class="filter-controls">
+                    <input type="month" id="month-filter">
+                </div>
+                <ul id="list" class="list">
+                    <!-- Transactions will be added here -->
+                </ul>
+            </section>
+
+            <!-- Monthly Summary -->
+            <section class="glass-panel summary-section">
+                <h3><i class="fas fa-chart-pie"></i> สรุปรายจ่ายหมวดหมู่ <span id="summary-month-display"></span></h3>
+                <div id="category-summary" class="category-summary-container">
+                    <!-- Category summary will be generated here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
