@@ -1,0 +1,17 @@
+{
+  "name": "Expense Tracker",
+  "short_name": "Expense",
+  "description": "แบบบันทึกรายรับ-รายจ่าย พร้อมระบบเงินออมและงบประมาณ",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "minimal_jp_icon_v2_cat_1772441220703.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -8,39 +8,75 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#fcfaf7">
+    <link rel="apple-touch-icon" href="minimal_jp_icon_v2_cat_1772441220703.png">
 </head>
 
 <body>
     <div class="app-container">
-        <!-- Header & Wallet -->
-        <header class="glass-panel">
-            <h1><i class="fas fa-wallet"></i> กระเป๋าเงินของฉัน</h1>
-            <div class="balance-container">
-                <p>ยอดเงินคงเหลือ</p>
-                <h2 id="balance" class="balance-amount">฿0.00</h2>
-            </div>
+        <header class="glass-panel wallet-card">
+            <p class="card-label">ยอดเงินคงเหลือสุทธิ (เดือนนี้)</p>
+            <h2 id="balance" class="balance-amount">฿0.00</h2>
             <div class="income-expense-summary">
-                <div class="summary-box income">
-                    <p>รายรับรวม</p>
+                <div class="summary-item income">
+                    <span>รายรับ (เดือนนี้)</span>
                     <h3 id="total-income" class="money-plus">+฿0.00</h3>
                 </div>
-                <div class="summary-box expense">
-                    <p>รายจ่ายรวม</p>
+                <div class="summary-item expense">
+                    <span>รายจ่าย (เดือนนี้)</span>
                     <h3 id="total-expense" class="money-minus">-฿0.00</h3>
                 </div>
             </div>
         </header>
 
+        <div class="dashboard-grid">
+            <!-- Savings & Wealth Card -->
+            <section class="glass-panel savings-card">
+                <h3><i class="fas fa-piggy-bank"></i> ทรัพย์สินและเงินออม</h3>
+                <div class="savings-display">
+                    <div class="savings-item">
+                        <p>เงินออมรวม</p>
+                        <h2 id="total-savings">฿0.00</h2>
+                    </div>
+                    <div class="wealth-item">
+                        <p>ความมั่งคั่งทั้งหมด (Wealth)</p>
+                        <h2 id="total-wealth">฿0.00</h2>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Card -->
+            <section class="glass-panel analytics-card">
+                <h3><i class="fas fa-chart-pie"></i> วิเคราะห์รายจ่าย <span id="summary-month-display"></span></h3>
+                <div class="chart-container">
+                    <canvas id="expensePieChart"></canvas>
+                    <div id="no-data-msg" class="no-data-message" style="display: none;">
+                        <i class="fas fa-chart-line fa-2x"></i>
+                        <p>ยังไม่มีข้อมูลรายจ่ายในเดือนนี้</p>
+                    </div>
+                </div>
+                <div id="category-summary" class="category-summary-container">
+                    <!-- Categories will be added here -->
+                </div>
+            </section>
+        </div>
+
         <main>
+
             <!-- Form Section -->
             <section class="glass-panel form-section">
                 <h3><i class="fas fa-plus-circle"></i> เพิ่มรายการใหม่</h3>
                 <form id="transaction-form">
                     <div class="form-group">
-                        <label for="type">ประเภท</label>
+                        <label for="type">ประเภทรายการ</label>
                         <select id="type" required>
-                            <option value="expense">รายจ่าย</option>
-                            <option value="income">รายรับ</option>
+                            <option value="expense">รายจ่าย (ใช้ไป)</option>
+                            <option value="income">รายรับ (ได้มา)</option>
+                            <option value="savings">เงินออม (เก็บไว้)</option>
+                            <option value="withdraw">ถอนเงินออม (เอามาใช้)</option>
                         </select>
                     </div>
 
@@ -81,21 +117,38 @@
                 </ul>
             </section>
 
-            <!-- Monthly Summary -->
-            <section class="glass-panel summary-section">
-                <h3><i class="fas fa-chart-pie"></i> สรุปรายจ่ายหมวดหมู่ <span id="summary-month-display"></span></h3>
-                <div id="category-summary" class="category-summary-container">
-                    <!-- Category summary will be generated here -->
+            <!-- Export Section -->
+            <section class="glass-panel export-section">
+                <h3><i class="fas fa-file-export"></i> ส่งออกข้อมูล</h3>
+                <div class="export-buttons" style="display: flex; gap: 10px;">
+                    <button class="btn btn-secondary" onclick="exportToJSON()"><i class="fas fa-file-code"></i>
+                        JSON</button>
+                    <button class="btn btn-secondary" onclick="exportToCSV()"><i class="fas fa-file-csv"></i>
+                        CSV/Excel</button>
                 </div>
             </section>
         </main>
     </div>
+
+
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker failed', err));
+            });
+        }
+    </script>
 </body>
 
 </html>
