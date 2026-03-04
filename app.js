@@ -1,12 +1,12 @@
 // Firebase Configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyAbXNhSvkuFtUpo-m7v0TYxBJ8OpWEvfOk",
-    authDomain: "expense-tracker-cd845.firebaseapp.com",
-    projectId: "expense-tracker-cd845",
-    storageBucket: "expense-tracker-cd845.firebasestorage.app",
-    messagingSenderId: "388614906285",
-    appId: "1:388614906285:web:da4bbfe7a395096adf0124",
-    measurementId: "G-204GS4X9TT"
+    apiKey: process.env.FB_API_KEY, // ดึงค่าจาก .env
+    authDomain: process.env.FB_AUTH_DOMAIN,
+    projectId: process.env.FB_PROJECT_ID,
+    storageBucket: process.env.FB_STORAGE_BUCKET,
+    messagingSenderId: process.env.FB_MESSAGING_SENDER_ID,
+    appId: process.env.FB_APP_ID,
+    measurementId: process.env.FB_MEASUREMENT_ID
 };
 
 // Initialize Firebase
