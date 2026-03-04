@@ -1,17 +1,35 @@
-// Firebase Configuration
-const firebaseConfig = {
-    apiKey: process.env.FB_API_KEY, // ดึงค่าจาก .env
-    authDomain: process.env.FB_AUTH_DOMAIN,
-    projectId: process.env.FB_PROJECT_ID,
-    storageBucket: process.env.FB_STORAGE_BUCKET,
-    messagingSenderId: process.env.FB_MESSAGING_SENDER_ID,
-    appId: process.env.FB_APP_ID,
-    measurementId: process.env.FB_MEASUREMENT_ID
-};
+let db;
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+// Initialize App
+function initializeApp() {
+    const env = window.ENV;
+    if (!env) {
+        alert('ไม่สามารถโหลดค่ากำหนดได้ (env.js missing)');
+        return;
+    }
+
+    const firebaseConfig = {
+        apiKey: env.FB_API_KEY,
+        authDomain: env.FB_AUTH_DOMAIN,
+        projectId: env.FB_PROJECT_ID,
+        storageBucket: env.FB_STORAGE_BUCKET,
+        messagingSenderId: env.FB_MESSAGING_SENDER_ID,
+        appId: env.FB_APP_ID,
+        measurementId: env.FB_MEASUREMENT_ID
+    };
+
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    db = firebase.firestore();
+
+    // Start App Logic
+    populateCategories();
+    syncWithFirebase();
+}
+
+// Global UI Elements
 
 // PIN Lock Configuration
 const APP_PIN = "1234";
@@ -506,8 +524,8 @@ function exportToCSV() {
     downloadFile(csvContent, `expense_report_${new Date().toISOString().slice(0, 10)}.csv`, "text/csv;charset=utf-8;");
 }
 
-populateCategories();
-syncWithFirebase();
+// Initialize application
+initializeApp();
 
 form.addEventListener('submit', addTransaction);
 monthFilter.addEventListener('change', init);
