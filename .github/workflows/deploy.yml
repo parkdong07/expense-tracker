@@ -27,6 +27,9 @@ jobs:
           echo "    FB_MEASUREMENT_ID: \"${{ secrets.FB_MEASUREMENT_ID }}\"" >> env.js
           echo "};" >> env.js
 
+      - name: Remove .gitignore for Deployment
+        run: rm .gitignore
+
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
