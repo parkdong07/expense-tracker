@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-const CACHE_NAME = 'expense-tracker-v2';
+const CACHE_NAME = 'expense-tracker-v3';
 const ASSETS = [
     './',
     'index.html',
