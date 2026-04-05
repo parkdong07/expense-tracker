@@ -256,7 +256,7 @@ function updateValues() {
     const selectedMonth = monthFilter.value;
     const filteredTransactions = transactions.filter(t => t.date.startsWith(selectedMonth));
 
-    // 1. Calculate Current Wallet Balance (All-time, not filtered by month)
+    // 1. Base totals (all-time)
     const allIncome = transactions
         .filter(t => t.type === 'income')
         .reduce((acc, t) => acc + t.amount, 0);
@@ -265,13 +265,18 @@ function updateValues() {
         .filter(t => t.type === 'expense')
         .reduce((acc, t) => acc + t.amount, 0);
 
+    const allSavings = transactions
+        .filter(t => t.type === 'savings')
+        .reduce((acc, t) => acc + t.amount, 0);
+
     const allWithdrawal = transactions
         .filter(t => t.type === 'withdraw')
         .reduce((acc, t) => acc + t.amount, 0);
 
-    const currentWalletBalance = (allIncome + allWithdrawal) - allExpense;
+    // 2. Balance = เงินในมือจริงๆ (รายรับ - รายจ่าย - ฝากออม + ถอนออม)
+    const currentWalletBalance = allIncome - allExpense - allSavings + allWithdrawal;
 
-    // 2. Monthly summary (filtered by selected month) - for display only
+    // 3. Monthly summary (filtered by selected month)
     const monthlyIncome = filteredTransactions
         .filter(t => t.type === 'income')
         .reduce((acc, t) => acc + t.amount, 0);
@@ -280,18 +285,10 @@ function updateValues() {
         .filter(t => t.type === 'expense')
         .reduce((acc, t) => acc + t.amount, 0);
 
-    // 3. Calculate Total Net Savings (Cumulative)
-    const totalDeposited = transactions
-        .filter(t => t.type === 'savings')
-        .reduce((acc, t) => acc + t.amount, 0);
+    // 4. Savings = เงินออมสุทธิ (ฝากออม - ถอนออม)
+    const currentTotalSavings = allSavings - allWithdrawal;
 
-    const totalWithdrawn = transactions
-        .filter(t => t.type === 'withdraw')
-        .reduce((acc, t) => acc + t.amount, 0);
-
-    const currentTotalSavings = totalDeposited - totalWithdrawn;
-
-    // 4. Calculate Total Wealth (Net Worth)
+    // 5. Wealth = ความมั่งคั่งรวม (เงินในมือ + เงินออม = รายรับ - รายจ่าย)
     const totalWealth = allIncome - allExpense;
 
     // Update Headings
