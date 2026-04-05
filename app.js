@@ -195,12 +195,6 @@ function getCategoryName(t, cId) {
     return cat ? cat.name : 'Unknown';
 }
 
-// Get category info
-function getCategoryInfo(cId) {
-    let allCats = [...categories.income, ...categories.expense, ...categories.savings];
-    return allCats.find(c => c.id === cId) || { icon: 'fa-question', color: '#64748b', name: 'อื่นๆ' };
-}
-
 // Add transactions to list
 function addTransactionDOM(transaction) {
     let sign = '';
