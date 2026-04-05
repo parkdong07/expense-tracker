@@ -262,10 +262,22 @@ function updateValues() {
     const selectedMonth = monthFilter.value;
     const filteredTransactions = transactions.filter(t => t.date.startsWith(selectedMonth));
 
-    // 1. Calculate Monthly Net Wallet (Money available or earned this month)
-    // Wallet = (Monthly Income + Monthly Withdrawals) - Monthly Expenses
-    // We NO LONGER subtract Savings Deposition from the monthly wallet here to avoid confusion.
-    // This makes the Wallet feel like a "Monthly Performance/Cash Available" card.
+    // 1. Calculate Current Wallet Balance (All-time, not filtered by month)
+    const allIncome = transactions
+        .filter(t => t.type === 'income')
+        .reduce((acc, t) => acc + t.amount, 0);
+
+    const allExpense = transactions
+        .filter(t => t.type === 'expense')
+        .reduce((acc, t) => acc + t.amount, 0);
+
+    const allWithdrawal = transactions
+        .filter(t => t.type === 'withdraw')
+        .reduce((acc, t) => acc + t.amount, 0);
+
+    const currentWalletBalance = (allIncome + allWithdrawal) - allExpense;
+
+    // 2. Monthly summary (filtered by selected month) - for display only
     const monthlyIncome = filteredTransactions
         .filter(t => t.type === 'income')
         .reduce((acc, t) => acc + t.amount, 0);
@@ -274,15 +286,7 @@ function updateValues() {
         .filter(t => t.type === 'expense')
         .reduce((acc, t) => acc + t.amount, 0);
 
-    const monthlyWithdrawal = filteredTransactions
-        .filter(t => t.type === 'withdraw')
-        .reduce((acc, t) => acc + t.amount, 0);
-
-    // monthlyNet = (Income + Cash brought back from Savings) - Expenses
-    const monthlyWalletBalance = (monthlyIncome + monthlyWithdrawal) - monthlyExpense;
-
-    // 2. Calculate Total Net Savings (Cumulative)
-    // Total Savings = All 'savings' - All 'withdraw'
+    // 3. Calculate Total Net Savings (Cumulative)
     const totalDeposited = transactions
         .filter(t => t.type === 'savings')
         .reduce((acc, t) => acc + t.amount, 0);
@@ -293,20 +297,11 @@ function updateValues() {
 
     const currentTotalSavings = totalDeposited - totalWithdrawn;
 
-    // 3. Calculate Total Wealth (Net Worth)
-    // Total Wealth = All Income - All Expense
-    const allTimeIncome = transactions
-        .filter(t => t.type === 'income')
-        .reduce((acc, t) => acc + t.amount, 0);
-
-    const allTimeExpense = transactions
-        .filter(t => t.type === 'expense')
-        .reduce((acc, t) => acc + t.amount, 0);
-
-    const totalWealth = allTimeIncome - allTimeExpense;
+    // 4. Calculate Total Wealth (Net Worth)
+    const totalWealth = allIncome - allExpense;
 
     // Update Headings
-    balance.innerText = `฿${formatNumber(monthlyWalletBalance)}`;
+    balance.innerText = `฿${formatNumber(currentWalletBalance)}`;
     totalSavingsDisplay.innerText = `฿${formatNumber(currentTotalSavings)}`;
     totalWealthDisplay.innerText = `฿${formatNumber(totalWealth)}`;
 
@@ -343,17 +338,17 @@ function updateCategorySummary(filteredTransactions, totalExpense) {
         categoryTotals[t.category] = (categoryTotals[t.category] || 0) + t.amount;
     });
 
-    categorySummaryContainer.innerHTML = ''; // Use categorySummaryContainer
+    categorySummaryContainer.innerHTML = '';
 
     if (expenses.length === 0) {
         categorySummaryContainer.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 1rem;">ยังไม่มีรายการใช้จ่ายในเดือนนี้</p>';
         return;
     }
 
-    Object.keys(categoryTotals).sort((a, b) => categoryTotals[b] - categoryTotals[a]).forEach(catId => { // Iterate by catId
+    Object.keys(categoryTotals).sort((a, b) => categoryTotals[b] - categoryTotals[a]).forEach(catId => {
         const amount = categoryTotals[catId];
         const percent = totalExpense > 0 ? (amount / totalExpense * 100).toFixed(0) : 0;
-        const catInfo = getCategoryInfo(catId); // Get info using catId
+        const catInfo = getCategoryInfo(catId);
 
         const div = document.createElement('div');
         div.classList.add('category-item');
@@ -397,9 +392,9 @@ function updatePieChart(filteredTransactions) {
         categoryTotals[t.category] = (categoryTotals[t.category] || 0) + t.amount;
     });
 
-    const labels = Object.keys(categoryTotals).map(catId => getCategoryInfo(catId).name); // Map catId to name for labels
+    const labels = Object.keys(categoryTotals).map(catId => getCategoryInfo(catId).name);
     const data = Object.values(categoryTotals);
-    const backgroundColors = Object.keys(categoryTotals).map(catId => { // Map catId to color
+    const backgroundColors = Object.keys(categoryTotals).map(catId => {
         return getCategoryInfo(catId).color;
     });
 
@@ -448,7 +443,6 @@ function updatePieChart(filteredTransactions) {
 
 // Helper to get category info
 function getCategoryInfo(catId) {
-    // Search in all categories
     for (const type in categories) {
         const cat = categories[type].find(c => c.id === catId);
         if (cat) return cat;
