@@ -273,8 +273,8 @@ function updateValues() {
         .filter(t => t.type === 'withdraw')
         .reduce((acc, t) => acc + t.amount, 0);
 
-    // 2. Balance = เงินในมือจริงๆ (รายรับ - รายจ่าย - ฝากออม + ถอนออม)
-    const currentWalletBalance = allIncome - allExpense - allSavings + allWithdrawal;
+    // 2. Balance = เงินในมือ (รายรับ - รายจ่าย)
+    const currentWalletBalance = allIncome - allExpense;
 
     // 3. Monthly summary (filtered by selected month)
     const monthlyIncome = filteredTransactions
